@@ -94,5 +94,5 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: 'Build Inventory Image'
         run: |
-          docker build . --tag ghcr.io/grolston/aws-guard-rules:latest
+          docker build .docker --tag ghcr.io/grolston/aws-guard-rules:latest
           docker push ghcr.io/grolston/aws-guard-rules:latest
