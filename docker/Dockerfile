@@ -1,6 +1,5 @@
-FROM ubuntu:24.04
-RUN apt-get -y upgrade
-RUN apt-get -y update
+FROM ubuntu:latest
+RUN apt-get update && apt-get install
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get -y install curl
