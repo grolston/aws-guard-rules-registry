@@ -1,5 +1,5 @@
 
-FROM ubuntu:22.10
+FROM ubuntu:20.10
 RUN apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 RUN apt-get install -y curl
