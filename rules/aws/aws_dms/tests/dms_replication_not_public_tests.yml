@@ -1,0 +1,104 @@
+###
+# DMS_REPLICATION_NOT_PUBLIC tests
+###
+---
+- name: Empty, SKIP
+  input: {}
+  expectations:
+    rules:
+      DMS_REPLICATION_NOT_PUBLIC: SKIP
+
+- name: Rule skips when no cluster present
+  input:
+    Resources: {}
+  expectations:
+    rules:
+      DMS_REPLICATION_NOT_PUBLIC: SKIP
+
+- name: DMS Replication Instance property PublicAccessible set to false, PASS
+  input:
+    Resources:
+      BasicReplicationInstance:
+        Type: "AWS::DMS::ReplicationInstance"
+        Properties:
+          ReplicationInstanceClass: dms.t2.small
+          PubliclyAccessible: false
+  expectations:
+    rules:
+      DMS_REPLICATION_NOT_PUBLIC: PASS
+
+- name: DMS Replication Instance property PublicAccessible set to true, FAIL
+  input:
+    Resources:
+      BasicReplicationInstance:
+        Type: "AWS::DMS::ReplicationInstance"
+        Properties:
+          ReplicationInstanceClass: dms.t2.small
+          PubliclyAccessible: true
+  expectations:
+    rules:
+      DMS_REPLICATION_NOT_PUBLIC: FAIL
+
+- name: DMS Replication Instance property PublicAccessible missing, FAIL
+  input:
+    Resources:
+      BasicReplicationInstance:
+        Type: "AWS::DMS::ReplicationInstance"
+        Properties:
+          ReplicationInstanceClass: dms.t2.small
+  expectations:
+    rules:
+      DMS_REPLICATION_NOT_PUBLIC: FAIL
+
+- name: CFN_NAG suppression for W91
+  input:
+    Resources:
+      BasicReplicationInstance:
+        Type: "AWS::DMS::ReplicationInstance"
+        Properties:
+          ReplicationInstanceClass: dms.t2.small
+          PubliclyAccessible: true
+        Metadata:
+          cfn_nag:
+            rules_to_suppress:
+            - id: W91
+              reason: Suppressed to test suppression works and skips this test
+  expectations:
+    rules:
+      DMS_REPLICATION_NOT_PUBLIC: SKIP
+
+- name: Guard suppression for DMS_REPLICATION_NOT_PUBLIC
+  input:
+    Resources:
+      BasicReplicationInstance:
+        Type: "AWS::DMS::ReplicationInstance"
+        Properties:
+          ReplicationInstanceClass: dms.t2.small
+          PubliclyAccessible: true
+        Metadata:
+          guard:
+            SuppressedRules:
+            - DMS_REPLICATION_NOT_PUBLIC
+  expectations:
+    rules:
+      DMS_REPLICATION_NOT_PUBLIC: SKIP
+
+- name: Guard and CFN_NAG suppression for W91 & DMS_REPLICATION_NOT_PUBLIC
+  input:
+    Resources:
+      BasicReplicationInstance:
+        Type: "AWS::DMS::ReplicationInstance"
+        Properties:
+          ReplicationInstanceClass: dms.t2.small
+          PubliclyAccessible: true
+        Metadata:
+          cfn_nag:
+            rules_to_suppress:
+            - id: W91
+              reason: Suppressed to test suppression works and skips this test
+          guard:
+            SuppressedRules:
+            - DMS_REPLICATION_NOT_PUBLIC
+  expectations:
+    rules:
+      DMS_REPLICATION_NOT_PUBLIC: SKIP
